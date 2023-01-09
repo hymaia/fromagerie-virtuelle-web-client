@@ -65,3 +65,15 @@ Resources:
           TargetOriginId: MyOrigin
           ViewerProtocolPolicy : allow-all
           Compress: true
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: whitelist
+            Locations:
+              - GB
+              - DE
+              - FR
+              - IT
+              - BE
+              - CH
+              - CA
+              - US
