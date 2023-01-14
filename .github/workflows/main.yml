@@ -9,16 +9,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.x
+      - name: Retrieve UserPoolId from Cloudformation 
+        id: retrieve-cognitouserpoolid
+        run: echo "COGNITO_USER_POOL_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
+      - name: Retrieve CognitoUserPoolId from Cloudformation 
+        id: retrieve-cognitoclientid
+        run: echo "COGNITO_CLIENT_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='CognitoClientId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
       - run: npm ci
-      - run: npm run build --if-present
+      - run: REACT_APP_COGNITO_USER_POOL_ID=${{ steps.retrieve-cognitouserpoolid.COGNITO_USER_POOL_ID }} REACT_APP_COGNITO_USER_POOL_ID=${{ steps.retrieve-cognitoclientid.COGNITO_CLIENT_ID }} npm run build
+      - run: npm run copy-to-s3
+      - run: npm run invalidate-cloudfront
+
   
