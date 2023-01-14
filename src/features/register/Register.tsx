@@ -1,10 +1,9 @@
-import { CognitoUser, CognitoUserAttribute } from "amazon-cognito-identity-js";
+import { CognitoUser } from "amazon-cognito-identity-js";
 import { useState } from "react";
 import UserPool from "../../services/UserPool";
 
 function Register() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [verifyProcess, setVerifyProcess] = useState(false);
   const [OTP, setOTP] = useState("");
@@ -12,13 +11,6 @@ function Register() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const attributeList: any[] = [];
-    // attributeList
-    // .push
-    // new CognitoUserAttribute({
-    //   Name: "email",
-    //   Value: email,
-    // })
-    // ();
     UserPool.signUp(username, password, attributeList, [], (err, data) => {
       if (err) {
         alert("Couldn't sign up");
