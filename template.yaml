@@ -85,4 +85,9 @@ Outputs:
   FromagerieVirtuelleCloudFrontDistributionId:
     Description: "Fromagerie virtuelle Web Client Bucket CloudFront Distribution Id"
     Value: !Ref MyDistribution
+  FromagerieVirtuelleRegisterUrl:
+    Description: "Fromagerie virtuelle Web Client Bucket CloudFront Distribution Id"
+    Value: !GetAtt MyDistribution.DomainName
+    Export:
+      Name: !Sub '${AWS::StackName}-FromagerieVirtuelleRegisterUrl'
  

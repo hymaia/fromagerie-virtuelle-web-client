@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -20,21 +19,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+      - run: sam build --use-container
+      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
       - name: Retrieve UserPoolId from Cloudformation 
-        id: retrieve-cognitouserpoolid
-        run: echo "COGNITO_USER_POOL_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
+        run: echo "REACT_APP_COGNITO_USER_POOL_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue" --output text)" >> $GITHUB_ENV
       - name: Retrieve CognitoUserPoolId from Cloudformation 
-        id: retrieve-cognitoclientid
-        run: echo "COGNITO_CLIENT_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='CognitoClientId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
-      # TODO
-      # - name: Retrieve Distribution ID from Cloudformation 
-      #   id: retrieve-cognitouserpoolid
-      #   run: echo "COGNITO_USER_POOL_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='UserPoolId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
-      # - name: Retrieve S3 Bucket name from Cloudformation 
-      #   id: retrieve-cognitoclientid
-      #   run: echo "COGNITO_CLIENT_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='CognitoClientId'].OutputValue" --output text)" >> $GITHUB_OUTPUT
+        run: echo "REACT_APP_COGNITO_CLIENT_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle --query "Stacks[0].Outputs[?OutputKey=='CognitoClientId'].OutputValue" --output text)" >> $GITHUB_ENV
+      - name: Retrieve DistributionID from Cloudformation
+        run: echo "CLOUDFRONT_DISTRIBUTION_ID=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle-webapp --query "Stacks[0].Outputs[?OutputKey=='FromagerieVirtuelleCloudFrontDistributionId'].OutputValue" --output text)" >> $GITHUB_ENV
+      - name: Retrieve S3 Bucket name from Cloudformation
+        run: echo "S3_BUCKET_ADDRESS=$(aws cloudformation --region eu-west-1 describe-stacks --stack-name fromagerie-virtuelle-webapp --query "Stacks[0].Outputs[?OutputKey=='FromagerieVirtuelleWebClientBucket'].OutputValue" --output text)" >> $GITHUB_ENV
       - run: npm ci
-      - run: S3_BUCKET_ADDRESS=${{ steps.xxxx.yyyy }} REACT_APP_COGNITO_USER_POOL_ID=${{ steps.retrieve-cognitouserpoolid.COGNITO_USER_POOL_ID }} REACT_APP_COGNITO_USER_POOL_ID=${{ steps.retrieve-cognitoclientid.COGNITO_CLIENT_ID }} npm run build
+      - run: npm run build
       - run: npm run copy-to-s3
-      - run: CLOUDFRONT_DISTRIBUTION_ID=${{ steps.xxxx.yyyy }} npm run invalidate-cloudfront
+      - run: npm run invalidate-cloudfront
   
