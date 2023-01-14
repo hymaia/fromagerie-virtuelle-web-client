@@ -77,3 +77,12 @@ Resources:
               - CH
               - CA
               - US
+
+Outputs:
+  FromagerieVirtuelleWebClientBucket:
+    Description: "Fromagerie virtuelle Web Client Bucket"
+    Value: !Ref MyBucket
+  FromagerieVirtuelleCloudFrontDistributionId:
+    Description: "Fromagerie virtuelle Web Client Bucket CloudFront Distribution Id"
+    Value: !Ref MyDistribution
+ 
