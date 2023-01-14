@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "fromagerie-virtuelle-webapp"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-dlh5angpgti9"
+s3_prefix = "fromagerie-virtuelle-webapp"
+region = "eu-west-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"

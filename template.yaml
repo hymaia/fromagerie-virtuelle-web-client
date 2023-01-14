@@ -7,7 +7,7 @@ Resources:
   MyBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: com.civetta-hymaia.fromagerievirtuelle-web-client
+      BucketName: fromagerie-virtuelle-web-client
 
   MyBucketPolicy:
     Type: AWS::S3::BucketPolicy
